@@ -10,7 +10,13 @@ pipeline {
   stages {
     stage('Cloning Packager Git') {
       steps {
-        git 'https://github.com/linkatedu/linkat-deb-builder.git'
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/main']],
+                          doGenerateSubmoduleConfigurations: false, 
+                          extensions: [], 
+                          submoduleCfg: [], 
+                          userRemoteConfigs: []])            }
+
       }
     }
     stage('Building image') {
@@ -34,7 +40,7 @@ pipeline {
          steps {
            sh 'rm source -rf; mkdir source'
            dir ('source') {
-             git branch: 'master',
+             git branch: 'main',
                credentialsId: 'xxxxxxxxxxxxxxxxxxxxx',
                url: 'https://github.com/deb-package-source-example.git'
             }
