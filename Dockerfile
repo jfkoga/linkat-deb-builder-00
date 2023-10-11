@@ -1,15 +1,17 @@
 # Dockerfile for building Debian packages using current stable repo.
-FROM debian:latest
+FROM debian:bookworm
 MAINTAINER Projecte Linkat <linkat@xtec.cat>
 
 #COPY sources-list /etc/apt/sources.list
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  devscripts \
-  equivs \
-  rsync \
-  locales \
-  gnupg2 \
-  debsigs \
+RUN set -ex \
+    && sed -i -- 's/Types: deb/Types: deb deb-src/g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update && apt-get install -y --no-install-recommends \
+  	devscripts \
+  	equivs \
+  	rsync \
+  	locales \
+  	gnupg2 \
+  	debsigs \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
