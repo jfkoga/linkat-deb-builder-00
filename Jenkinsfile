@@ -2,7 +2,7 @@ def sourcePackage = ""
 
 pipeline {
   environment {
-    registry = "jfkoga/linkat-deb-builder-00"
+    registry = "linkatedu/linkat-deb-builder"
     registryCredential = 'dockerhub'
     dockerImage = ''
   }
@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage('Cloning Packager Git') {
       steps {
-        git 'https://github.com/jfkoga/linkat-deb-builder-00.git'
+        git 'https://github.com/linkatedu/linkat-deb-builder.git'
       }
     }
     stage('Building image') {
@@ -29,7 +29,24 @@ pipeline {
         }
       }
     }
-  
+    
+    stage('Clone another repository to subdir') {
+         steps {
+           sh 'rm source -rf; mkdir source'
+           dir ('source') {
+             git branch: 'master',
+               credentialsId: 'xxxxxxxxxxxxxxxxxxxxx',
+               url: 'https://github.com/deb-package-source-example.git'
+            }
+        }
+    }
+    
+stage('Build') {
+       steps {
+         sh 'rm output -rf; mkdir output'
+         sh 'docker run --rm -v /data/docker/lab/jenkins/jenkins.linkat.lab/jenkins/workspace/docker-packager-18.04/source:/package linkatedu/linkat-deb-builder:$BUILD_NUMBER -b'
+       }
+    }
     
    
     
